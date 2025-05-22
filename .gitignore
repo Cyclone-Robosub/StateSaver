@@ -1,0 +1,14 @@
+build/*
+install/*
+log/*
+
+.vscode/*
+.idea/*
+*.swp
+*.swo
+
+*.db
+*.db-*
+
+data/*
+*.csv
