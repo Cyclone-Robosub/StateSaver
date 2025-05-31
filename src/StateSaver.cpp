@@ -15,7 +15,7 @@ StateSaver::StateSaver() : Node("state_saver")
     timer_ = this->create_wall_timer(
         std::chrono::milliseconds(10),  // 10ms = 100Hz
         std::bind(&StateSaver::timer_callback, this));
-    pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic_",10, 
+    pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic",10, 
         std::bind(&StateSaver::pwm_callback, this, std::placeholders::_1));
      depth_pressure_sensor_subscription_ =
         this->create_subscription<std_msgs::msg::String>(
@@ -121,9 +121,9 @@ void StateSaver::write_csv_line()
                   << linear_acceleration_z << ","
                   << mag_field_x << ","
                   << mag_field_y << ","
-                  << mag_field_z; << ","
+                  << mag_field_z << ",";
     for(auto i : pwm_array){ 
-    imu_data_file_ << i << ",";
+      imu_data_file_ << i << ",";
     }
     imu_data_file_ << depth_pressure_msg;
     imu_data_file_ << "\n";
