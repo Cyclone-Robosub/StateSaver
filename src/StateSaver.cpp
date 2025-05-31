@@ -119,8 +119,13 @@ void StateSaver::write_csv_line()
                   << linear_acceleration_z << ","
                   << mag_field_x << ","
                   << mag_field_y << ","
-                  << mag_field_z
-                  << std::endl;
+                  << mag_field_z;
+    for(auto i : pwm_array){ 
+    imu_data_file_ << i << ",";
+    }
+    imu_data_file_ << depth_pressure_msg;
+    imu_data_file_ << "\n";
+
 }
 std::string StateSaver::getCurrentDateTime() {
   time_t now = time(0);
