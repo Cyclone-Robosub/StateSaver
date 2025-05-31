@@ -13,7 +13,6 @@ protected:
         rclcpp::init(0, nullptr);
         std::filesystem::remove_all("data");
         
-        // Create publishers
         temp_node_ = rclcpp::Node::make_shared("test_node");
         imu_pub_ = temp_node_->create_publisher<sensor_msgs::msg::Imu>("/imu", 10);
         mag_pub_ = temp_node_->create_publisher<sensor_msgs::msg::MagneticField>("/mag", 10);
@@ -25,8 +24,6 @@ protected:
         rclcpp::shutdown();
         std::filesystem::remove_all("data");
     }
-
-    // Publishers for test use
 
     rclcpp::Node::SharedPtr temp_node_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
@@ -40,7 +37,6 @@ TEST_F(StateSaverTest, TestCSVInitialization) {
     auto node = std::make_shared<StateSaver>();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     
-    // Check if CSV file exists and has correct header
     bool csv_found = false;
     for (const auto& entry : std::filesystem::directory_iterator("data")) {
         if (entry.path().extension() == ".csv") {
@@ -81,13 +77,11 @@ TEST_F(StateSaverTest, TestPWMCallback) {
 TEST_F(StateSaverTest, TestDepthPressureCallback) {
     auto node = std::make_shared<StateSaver>();
     
-    // Create test depth pressure message
     auto depth_msg = std::make_shared<std_msgs::msg::String>();
     depth_msg->data = "123.45";
     
     depth_pub_->publish(*depth_msg);
     
-    // Let the callback process
     rclcpp::spin_some(node);
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     
@@ -98,7 +92,6 @@ TEST_F(StateSaverTest, TestDepthPressureCallback) {
 TEST_F(StateSaverTest, TestIMUCallback) {
     auto node = std::make_shared<StateSaver>();
     
-    // Create test IMU message
     auto imu_msg = std::make_shared<sensor_msgs::msg::Imu>();
     imu_msg->angular_velocity.x = 1.0;
     imu_msg->angular_velocity.y = 2.0;
@@ -109,16 +102,12 @@ TEST_F(StateSaverTest, TestIMUCallback) {
     
     imu_pub_->publish(*imu_msg);
     
-    // Let the callback process
     rclcpp::spin_some(node);
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     
     EXPECT_TRUE(true); // Callback processed without crashing
 }
 
-
-// Test data writing to CSV
-// Test data writing to CSV
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
