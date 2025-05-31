@@ -121,7 +121,7 @@ void StateSaver::write_csv_line()
                   << linear_acceleration_z << ","
                   << mag_field_x << ","
                   << mag_field_y << ","
-                  << mag_field_z;
+                  << mag_field_z; << ","
     for(auto i : pwm_array){ 
     imu_data_file_ << i << ",";
     }
