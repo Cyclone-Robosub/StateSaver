@@ -1,5 +1,6 @@
 #include "StateSaver.hpp"
 #include <filesystem>
+#include <chrono>
 
 StateSaver::StateSaver() : Node("state_saver")
 {
@@ -120,6 +121,13 @@ void StateSaver::write_csv_line()
                   << mag_field_y << ","
                   << mag_field_z
                   << std::endl;
+}
+std::string StateSaver::getCurrentDateTime() {
+  time_t now = time(0);
+  tm *localTime = localtime(&now);
+  char buffer[80];
+  strftime(buffer, sizeof(buffer), "%H:%M:%S", localTime);
+  return std::string(buffer);
 }
 
 void StateSaver::write_data_to_csv()
