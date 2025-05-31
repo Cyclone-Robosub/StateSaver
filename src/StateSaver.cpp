@@ -15,7 +15,7 @@ StateSaver::StateSaver() : Node("state_saver")
     timer_ = this->create_wall_timer(
         std::chrono::milliseconds(10),  // 10ms = 100Hz
         std::bind(&StateSaver::timer_callback, this));
-    pwm_subscription = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic_",10, 
+    pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic_",10, 
         std::bind(&StateSaver::pwm_callback, this, std::placeholders::_1));
      depth_pressure_sensor_subscription_ =
         this->create_subscription<std_msgs::msg::String>(
@@ -52,7 +52,9 @@ void StateSaver::initialize_csv_file()
         imu_data_file_ << "timestamp,"
                       << "angular_velocity_x,angular_velocity_y,angular_velocity_z,"
                       << "linear_acceleration_x,linear_acceleration_y,linear_acceleration_z,"
-                      << "magnetic_field_x,magnetic_field_y,magnetic_field_z"
+                      << "magnetic_field_x,magnetic_field_y,magnetic_field_z,"
+                      << "pwm_1,pwm_2,pwm_3,pwm_4,pwm_5,pwm_6,pwm_7,pwm_8,"
+                      << "depth_pressure_sensor"
                       << std::endl;
         file_initialized_ = true;
         RCLCPP_INFO(this->get_logger(), "CSV file initialized: %s", csv_filename_.c_str());
@@ -60,7 +62,7 @@ void StateSaver::initialize_csv_file()
         RCLCPP_ERROR(this->get_logger(), "Failed to open CSV file: %s", csv_filename_.c_str());
     }
 }
-void StateSaver::pwm_callback(const std::msgs::Int32MultiArray::SharedPtr msg){
+void StateSaver::pwm_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg){
     int i = 0;
     for(int32_t value : msg->data){
          int setvalue = (int)value;
@@ -68,7 +70,7 @@ void StateSaver::pwm_callback(const std::msgs::Int32MultiArray::SharedPtr msg){
         ++i;
     }
 }
-void StateSaver::depthPressureSensorCallback(const std__msgs::msg::String::SharedPtr msg){
+void StateSaver::depthPressureSensorCallback(const std_msgs::msg::String::SharedPtr msg){
     depth_pressure_msg = msg->data;
 }
 void StateSaver::imu_callback(const std::shared_ptr<const sensor_msgs::msg::Imu> &msg)

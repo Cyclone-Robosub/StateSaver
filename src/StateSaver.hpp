@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "std_msgs/msg/int32_multi_array.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 #include "sensor_msgs/msg/magnetic_field.hpp"
 #include <mutex>
@@ -19,13 +20,18 @@ public:
 private:
     void imu_callback(const std::shared_ptr<const sensor_msgs::msg::Imu> &msg);
     void mag_callback(const std::shared_ptr<const sensor_msgs::msg::MagneticField> &msg);
+    void pwm_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg);
+    void depthPressureSensorCallback(const std_msgs::msg::String::SharedPtr msg);
     void timer_callback();
     void initialize_csv_file();  // New function to initialize CSV file
     void write_data_to_csv();
     void write_csv_line();
+    std::string getCurrentDateTime();
 
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscription_;
     rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr mag_subscription_;
+    rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr pwm_subscription_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr depth_pressure_sensor_subscription_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     // File handling
