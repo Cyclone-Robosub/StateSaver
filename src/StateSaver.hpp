@@ -42,6 +42,9 @@ private:
     double linear_acceleration_y = 0.0;
     double linear_acceleration_z = 0.0;
 
+    int pwm_array[8];
+    std::string depth_pressure_msg;
+
     // Magnetic field data members
     double mag_field_x = 0.0;
     double mag_field_y = 0.0;
