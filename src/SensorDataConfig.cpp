@@ -5,8 +5,6 @@
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include <iomanip>
 
-
-
 SensorsDataConfig::SensorsDataConfig(std::ofstream &outputStateFile)
     : Node("sensorsNode"), m_stateFile(outputStateFile) {
   callbackDepthPressure =
@@ -107,7 +105,7 @@ void SensorsDataConfig::magCallback(
     const sensor_msgs::msg::MagneticField::SharedPtr msg) {
   magData_ = *msg;
 }
-void SensorsDataConfig::Odom_insCallback( 
+void SensorsDataConfig::Odom_insCallback(
     const nav_msgs::msg::Odometry::SharedPtr msg) {
   geometry_msgs::msg::Quaternion orientation_quat_msg =
       msg->pose.pose.orientation;
@@ -116,28 +114,10 @@ void SensorsDataConfig::Odom_insCallback(
   tf2::Matrix3x3 m(q);
   m.getRPY(roll_r, pitch_r, yaw_r);
 }
-void SensorsDataConfig::PWMArrayCallback(
-    const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
-  pwmData_ = *msg;
-}
-void SensorsDataConfig::durationCallback(
-    const std_msgs::msg::Int64::SharedPtr msg) {
-  durationData_ = msg->data;
-}
-void SensorsDataConfig::ManualControlCallback(
-    const std_msgs::msg::Bool::SharedPtr msg) {
-  manualControlData_ = msg->data;
-}
-void SensorsDataConfig::ManualOverrideCallback(
-    const std_msgs::msg::Empty::SharedPtr msg) {
-  manualOverrideTriggered_ = true;
-}
 
 void SensorsDataConfig::writeDataToFile() {
   auto now = std::chrono::system_clock::now();
   std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-  m_stateFile << std::put_time(std::localtime(&currentTime), "%F %T") << ","
-              << "Manual Override Triggered" << std::endl;
   m_stateFile << std::put_time(std::localtime(&currentTime), "%F %T") << ",";
   m_stateFile << depthPressureData_ << ",";
 
@@ -165,10 +145,10 @@ void SensorsDataConfig::writeDataToFile() {
     m_stateFile << pwmData_.data[i]
                 << (i == pwmData_.data.size() - 1 ? "" : ",");
   }
-  m_stateFile << ",";
-  m_stateFile << durationData_ << ",";
-  m_stateFile << manualControlData_ << ",";
-  m_stateFile << (manualOverrideTriggered_ ? "true" : "false") << std::endl;
-
-  manualOverrideTriggered_ = false;
+  m_stateFile << std::endl;
+  if (stateFile.tellp() > 100) {
+    stateFile.flush();
+    stateFile.clear();
+    stateFile.seekp(0);
+  }
 }
