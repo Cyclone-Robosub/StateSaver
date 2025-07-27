@@ -66,27 +66,6 @@ SensorsDataConfig::SensorsDataConfig(std::ofstream &outputStateFile)
           std::bind(&SensorsDataConfig::Odom_insCallback, this,
                     std::placeholders::_1),
           odom_ins_ned_Options);
-  CLTool_subscription_ =
-      this->create_subscription<std_msgs::msg::Int32MultiArray>(
-          "array_Cltool_topic", rclcpp::QoS(10),
-          std::bind(&SensorsDataConfig::PWMArrayCallback, this,
-                    std::placeholders::_1),
-          commandOptions);
-  duration_subscription_ = this->create_subscription<std_msgs::msg::Int64>(
-      "duration_Cltool_topic", rclcpp::QoS(10),
-      std::bind(&SensorsDataConfig::durationCallback, this,
-                std::placeholders::_1),
-      durationOptions);
-  Manual_Control_sub = this->create_subscription<std_msgs::msg::Bool>(
-      "manual_toggle_switch", rclcpp::QoS(10),
-      std::bind(&SensorsDataConfig::ManualControlCallback, this,
-                std::placeholders::_1),
-      ManualToggleOptions);
-  Manual_Override_sub = this->create_subscription<std_msgs::msg::Empty>(
-      "manualOverride", rclcpp::QoS(4),
-      std::bind(&SensorsDataConfig::ManualOverrideCallback, this,
-                std::placeholders::_1),
-      ManualOverrideOptions);
 
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(100),
@@ -146,9 +125,9 @@ void SensorsDataConfig::writeDataToFile() {
                 << (i == pwmData_.data.size() - 1 ? "" : ",");
   }
   m_stateFile << std::endl;
-  if (stateFile.tellp() > 100) {
-    stateFile.flush();
-    stateFile.clear();
-    stateFile.seekp(0);
+  if (m_stateFile.tellp() > 100) {
+    m_stateFile.flush();
+    m_stateFile.clear();
+    m_stateFile.seekp(0);
   }
 }

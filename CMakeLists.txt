@@ -21,7 +21,8 @@ ament_target_dependencies(state_saver rclcpp std_msgs sensor_msgs  nav_msgs
 
 install(TARGETS state_saver DESTINATION lib/${PROJECT_NAME})
 
-ament_package()
 ament_export_dependencies(rclcpp nav_msgs geometry_msgs tf2 tf2_geometry_msgs)
+ament_package()
+
 
 
