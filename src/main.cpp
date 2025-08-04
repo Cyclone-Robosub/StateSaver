@@ -5,7 +5,6 @@
 #include <iostream>
 
 namespace fs = std::filesystem;
-
 std::ofstream makeStateFile() {
   std::ofstream stateFile;
   fs::path stateFilePath = fs::current_path().parent_path().parent_path();
@@ -16,7 +15,7 @@ std::ofstream makeStateFile() {
   // alternatively implement a more sophisticated rotation strategy
   stateFile.open(
       stateFileString,
-      std::ofstream::out); // Open for output, truncating if it exists
+      std::ofstream::app); // Open for output, truncating if it exists
 
   if (stateFile.is_open()) {
     stateFile << "Time,Depth(m),Pressure,IMU "
