@@ -7,9 +7,8 @@
 namespace fs = std::filesystem;
 std::ofstream makeStateFile() {
   std::ofstream stateFile;
-  fs::path stateFilePath = fs::current_path().parent_path().parent_path();
   std::string stateFileString =
-      stateFilePath / "state.csv"; // Use / for path concatenation
+        "../../state.csv"; // Use / for path concatenation
 
   // Improved file handling: Create a new file each time.  You could
   // alternatively implement a more sophisticated rotation strategy

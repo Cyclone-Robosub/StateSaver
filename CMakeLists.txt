@@ -15,13 +15,11 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 
 add_executable(state_saver src/main.cpp
-    src/SensorDataConfig.hpp
 	src/SensorDataConfig.cpp
     )
 
 ament_add_gtest(state_saver_test
   test/test_state_saver.cpp
-  src/SensorDataConfig.hpp
   src/SensorDataConfig.cpp
 )
 add_executable(state_saver_checker
