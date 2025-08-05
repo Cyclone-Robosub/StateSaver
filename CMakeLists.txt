@@ -24,12 +24,20 @@ ament_add_gtest(state_saver_test
   src/SensorDataConfig.hpp
   src/SensorDataConfig.cpp
 )
-
+add_executable(state_saver_checker
+src/StateSaverChecker/main.cpp
+)
 ament_target_dependencies(state_saver rclcpp std_msgs sensor_msgs  nav_msgs
   geometry_msgs
   tf2
   tf2_geometry_msgs)
-  ament_target_dependencies(state_saver_test rclcpp std_msgs sensor_msgs  nav_msgs
+
+ament_target_dependencies(state_saver_test rclcpp std_msgs sensor_msgs  nav_msgs
+  geometry_msgs
+  tf2
+  tf2_geometry_msgs)
+  
+ament_target_dependencies(state_saver_checker rclcpp std_msgs sensor_msgs  nav_msgs
   geometry_msgs
   tf2
   tf2_geometry_msgs)
