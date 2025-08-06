@@ -137,6 +137,7 @@ TEST_F(SensorsDataConfigTest, IntentionalWaiting)
                                {
       int min = 1;
     int max = 100;
+    int numTest = 5;
          auto imu_msg = std::make_shared<sensor_msgs::msg::Imu>();
            std::random_device rd; 
     std::mt19937 gen(rd()); 
@@ -145,7 +146,8 @@ TEST_F(SensorsDataConfigTest, IntentionalWaiting)
         imu_msg->angular_velocity.x = distrib(gen);
         imu_msg->angular_velocity.y = min + (rand() % (max - min + 1));
         imu_msg->angular_velocity.z = 2525.0;
-        imu_msg->linear_acceleration.x = 0.1;
+        imu_msg->linear_acceleration.x = numTest;
+        numTest += 10;
         imu_msg->linear_acceleration.y = 325352535;
         imu_msg->linear_acceleration.z = 342;
         this->imu_pub_->publish(*imu_msg);
