@@ -12,3 +12,6 @@ log/*
 
 data/*
 *.csv
+
+output.txt
+error.txt
