@@ -13,7 +13,7 @@ echo "Open either the state.csv or the latest gtest result text file.\n"
 echo "Press Control - C twice to stop the test"
 cd build/state_saver
 ./state_saver_test # > ../../Latest_gtest_results.txt                                                                               
-                                                                                                                                                                                                                                           
+cd ../../StateSaver                                                                                                                                                                                                                                           
                                                                                                                                                                                                                                            
                                                                                                                                                                                                                                            
                                                                                                                                                                                                                                            

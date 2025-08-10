@@ -130,37 +130,37 @@ TEST_F(SensorsDataConfigTest, TestIMUCallback)
   rclcpp::shutdown();
   ROSthread.join();
 }
-TEST_F(SensorsDataConfigTest, IntentionalWaiting)
-{
-  std::cout << "THIS TEST IS MEANT TO BE STUCK/APPEAR FROZEN. After a while, please hit Control-C two times." << std::endl;
-  std::jthread PublisherThread([this]()
-                               {
-      int min = 1;
-    int max = 100;
-    int numTest = 5;
-         auto imu_msg = std::make_shared<sensor_msgs::msg::Imu>();
-           std::random_device rd; 
-    std::mt19937 gen(rd()); 
-    std::uniform_int_distribution<> distrib(500, 1000); 
-        while(true){
-        imu_msg->angular_velocity.x = distrib(gen);
-        imu_msg->angular_velocity.y = min + (rand() % (max - min + 1));
-        imu_msg->angular_velocity.z = 2525.0;
-        imu_msg->linear_acceleration.x = numTest;
-        numTest += 10;
-        imu_msg->linear_acceleration.y = 325352535;
-        imu_msg->linear_acceleration.z = 342;
-        this->imu_pub_->publish(*imu_msg);
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        } });
-  auto sensorsNode = std::make_shared<SensorsDataConfig>(THISISTHEONE);
-  rclcpp::executors::MultiThreadedExecutor executor;
-  executor.add_node(sensorsNode);
-  std::cout << "ROS2 StateSaver running" << std::endl;
-  executor.spin();
-  rclcpp::shutdown();
-  std::cout << "Shutting Down" << std::endl;
-}
+//TEST_F(SensorsDataConfigTest, IntentionalWaiting)
+//{
+//  std::cout << "THIS TEST IS MEANT TO BE STUCK/APPEAR FROZEN. After a while, please hit Control-C two times." << std::endl;
+//  std::jthread PublisherThread([this]()
+//                               {
+//      int min = 1;
+//    int max = 100;
+//    int numTest = 5;
+//         auto imu_msg = std::make_shared<sensor_msgs::msg::Imu>();
+//           std::random_device rd; 
+//    std::mt19937 gen(rd()); 
+//    std::uniform_int_distribution<> distrib(500, 1000); 
+//        while(true){
+//        imu_msg->angular_velocity.x = distrib(gen);
+//        imu_msg->angular_velocity.y = min + (rand() % (max - min + 1));
+//        imu_msg->angular_velocity.z = 2525.0;
+//        imu_msg->linear_acceleration.x = numTest;
+//        numTest += 10;
+//        imu_msg->linear_acceleration.y = 325352535;
+//        imu_msg->linear_acceleration.z = 342;
+//        this->imu_pub_->publish(*imu_msg);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+//        } });
+//  auto sensorsNode = std::make_shared<SensorsDataConfig>(THISISTHEONE);
+//  rclcpp::executors::MultiThreadedExecutor executor;
+//  executor.add_node(sensorsNode);
+//  std::cout << "ROS2 StateSaver running" << std::endl;
+//  executor.spin();
+//  rclcpp::shutdown();
+//  std::cout << "Shutting Down" << std::endl;
+//}
 
 int main(int argc, char **argv)
 {
