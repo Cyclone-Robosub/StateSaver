@@ -67,6 +67,20 @@ SensorsDataConfig::SensorsDataConfig(std::ofstream &outputStateFile)
                     std::placeholders::_1),
           odom_ins_ned_Options);
 
+  position_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
+      "position_topic", rclcpp::QoS(5),
+      std::bind(&SensorsDataConfig::positionCallback, this,
+                std::placeholders::_1),
+      positionOptions);
+
+  waypoint_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
+      "waypoint_topic", rclcpp::QoS(5),
+      std::bind(&SensorsDataConfig::waypointCallback, this,
+                std::placeholders::_1),
+      waypointOptions);
+
+  
+
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(100),
       std::bind(&SensorsDataConfig::writeDataToFile, this));
@@ -100,26 +114,37 @@ void SensorsDataConfig::writeDataToFile() {
   m_stateFile << std::put_time(std::localtime(&currentTime), "%F %T") << ",";
   m_stateFile << depthPressureData_ << ",";
 
-  m_stateFile << imuData_.orientation.x << "," << imuData_.orientation.y << ","
-              << imuData_.orientation.z << "," << imuData_.orientation.w << ",";
+  for (size_t i = 0; i < positionData_.data.size(); ++i) {
+    m_stateFile << positionData_.data[i]
+                << (i == positionData_.data.size() - 1 ? "" : ",");
+  }
+  m_stateFile << ",";
+  for (size_t i = 0; i < waypointData_.data.size(); ++i) {
+    m_stateFile << waypointData_.data[i]
+                << (i == waypointData_.data.size() - 1 ? "" : ",");
+  }
+  
 
-  // ADDED: Gyro (Angular Velocity)
-  m_stateFile << imuData_.angular_velocity.x << ","
-              << imuData_.angular_velocity.y << ","
-              << imuData_.angular_velocity.z << ",";
-
-  // ADDED: Accel (Linear Acceleration)
-  m_stateFile << imuData_.linear_acceleration.x << ","
-              << imuData_.linear_acceleration.y << ","
-              << imuData_.linear_acceleration.z << ",";
-
-  // ADDED: Mag (Magnetic Field)
-  m_stateFile << magData_.magnetic_field.x << "," << magData_.magnetic_field.y
-              << "," << magData_.magnetic_field.z << ",";
-
-  // ADDED: Roll, Pitch, Yaw
-  m_stateFile << roll_r << "," << pitch_r << "," << yaw_r << ",";
-
+#  m_stateFile << imuData_.orientation.x << "," << imuData_.orientation.y << ","
+#              << imuData_.orientation.z << "," << imuData_.orientation.w << ",";
+#
+#  // ADDED: Gyro (Angular Velocity)
+#  m_stateFile << imuData_.angular_velocity.x << ","
+#              << imuData_.angular_velocity.y << ","
+#              << imuData_.angular_velocity.z << ",";
+#
+#  // ADDED: Accel (Linear Acceleration)
+#  m_stateFile << imuData_.linear_acceleration.x << ","
+#              << imuData_.linear_acceleration.y << ","
+#              << imuData_.linear_acceleration.z << ",";
+#
+#  // ADDED: Mag (Magnetic Field)
+#  m_stateFile << magData_.magnetic_field.x << "," << magData_.magnetic_field.y
+#              << "," << magData_.magnetic_field.z << ",";
+#
+#  // ADDED: Roll, Pitch, Yaw
+#  m_stateFile << roll_r << "," << pitch_r << "," << yaw_r << ",";
+#
   for (size_t i = 0; i < pwmData_.data.size(); ++i) {
     m_stateFile << pwmData_.data[i]
                 << (i == pwmData_.data.size() - 1 ? "" : ",");
