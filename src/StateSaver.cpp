@@ -17,6 +17,14 @@ StateSaver::StateSaver() : Node("state_saver")
         std::bind(&StateSaver::timer_callback, this));
     pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic",10, 
         std::bind(&StateSaver::pwm_callback, this, std::placeholders::_1));
+
+    position_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("sent_position_topic",10, 
+        std::bind(&StateSaver::position_callback, this, std::placeholders::_1));
+
+    waypoint_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("sent_waypoint_topic",10, 
+        std::bind(&StateSaver::waypoint_callback, this, std::placeholders::_1));
+    
+
      depth_pressure_sensor_subscription_ =
         this->create_subscription<std_msgs::msg::String>(
             "depthPressureSensorData", rclcpp::QoS(5),
@@ -49,12 +57,14 @@ void StateSaver::initialize_csv_file()
 
     imu_data_file_.open(csv_filename_, std::ios::out);
     if (imu_data_file_.is_open()) {
-        imu_data_file_ << "timestamp,"
+        imu_data_file_ << "timestamp," << "px, py, pz, pp, pq, pr, wx, wy, wz, wp, wq, wr" 
+        /*
                       << "angular_velocity_x,angular_velocity_y,angular_velocity_z,"
                       << "linear_acceleration_x,linear_acceleration_y,linear_acceleration_z,"
-                      << "magnetic_field_x,magnetic_field_y,magnetic_field_z,"
+                      << "magnetic_field_x,magnetic_field_y,magnetic_field_z," 
+        */
                       << "pwm_1,pwm_2,pwm_3,pwm_4,pwm_5,pwm_6,pwm_7,pwm_8,"
-                      << "depth_pressure_sensor"
+          //            << "depth_pressure_sensor"
                       << std::endl;
         file_initialized_ = true;
         RCLCPP_INFO(this->get_logger(), "CSV file initialized: %s", csv_filename_.c_str());
@@ -70,6 +80,21 @@ void StateSaver::pwm_callback(const std_msgs::msg::Int32MultiArray::SharedPtr ms
         ++i;
     }
 }
+void StateSaver::position_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg){
+    int i = 0;
+    for(float value : msg->data){
+        position_array[i] = (int)value;
+        ++i;
+    }
+}
+void StateSaver::waypoint_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg){
+    int i = 0;
+    for(float value : msg->data){
+        waypoint_array[i] = (int)value;
+        ++i;
+    }
+}
+
 void StateSaver::depthPressureSensorCallback(const std_msgs::msg::String::SharedPtr msg){
     depth_pressure_msg = msg->data;
 }
@@ -113,7 +138,7 @@ void StateSaver::write_csv_line()
 
     imu_data_file_ << std::put_time(std::localtime(&now_time_t), "%Y-%m-%d %H:%M:%S") << "."
                   << std::setfill('0') << std::setw(3) << now_ms.count() << ","
-                  << angular_velocity_x << ","
+/*                  << angular_velocity_x << ","
                   << angular_velocity_y << ","
                   << angular_velocity_z << ","
                   << linear_acceleration_x << ","
@@ -121,11 +146,18 @@ void StateSaver::write_csv_line()
                   << linear_acceleration_z << ","
                   << mag_field_x << ","
                   << mag_field_y << ","
-                  << mag_field_z << ",";
+                  << mag_field_z << ",";*/
+
+    for(auto i : position_array){ 
+      imu_data_file_ << i << ",";
+    }
+    for(auto i : waypoint_array){ 
+      imu_data_file_ << i << ",";
+    }   
     for(auto i : pwm_array){ 
       imu_data_file_ << i << ",";
     }
-    imu_data_file_ << depth_pressure_msg;
+    //imu_data_file_ << depth_pressure_msg;
     imu_data_file_ << "\n";
 
 }

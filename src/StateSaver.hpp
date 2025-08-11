@@ -32,6 +32,8 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::MagneticField>::SharedPtr mag_subscription_;
     rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr pwm_subscription_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr depth_pressure_sensor_subscription_;
+    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr position_subscription_;
+    rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr waypoint_subscription_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     // File handling
@@ -49,6 +51,9 @@ private:
     double linear_acceleration_z = 0.0;
 
     int pwm_array[8];
+    int position_array[6];
+    int waypoint_array[6];
+
     std::string depth_pressure_msg;
 
     // Magnetic field data members
