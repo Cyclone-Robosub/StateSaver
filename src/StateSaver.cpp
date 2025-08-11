@@ -18,10 +18,10 @@ StateSaver::StateSaver() : Node("state_saver")
     pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic",10, 
         std::bind(&StateSaver::pwm_callback, this, std::placeholders::_1));
 
-    position_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("sent_position_topic",10, 
+    position_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("position_topic",10, 
         std::bind(&StateSaver::position_callback, this, std::placeholders::_1));
 
-    waypoint_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("sent_waypoint_topic",10, 
+    waypoint_subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>("waypoint_topic",10, 
         std::bind(&StateSaver::waypoint_callback, this, std::placeholders::_1));
     
 
@@ -137,7 +137,7 @@ void StateSaver::write_csv_line()
         now.time_since_epoch()) % 1000;
 
     imu_data_file_ << std::put_time(std::localtime(&now_time_t), "%Y-%m-%d %H:%M:%S") << "."
-                  << std::setfill('0') << std::setw(3) << now_ms.count() << ","
+                  << std::setfill('0') << std::setw(3) << now_ms.count() << ",";
 /*                  << angular_velocity_x << ","
                   << angular_velocity_y << ","
                   << angular_velocity_z << ","
