@@ -138,17 +138,19 @@ void SensorsDataConfig::writeDataToFile() {
   auto now = std::chrono::system_clock::now();
   std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
   m_stateFile << std::put_time(std::localtime(&currentTime), "%F %T") << ",";
-  m_stateFile << depthPressureData_ << ",";
+//  m_stateFile << depthPressureData_ << ",";
 
   for (size_t i = 0; i < 6; ++i) {
+    
     if (i < positionData_.data.size()) {
-      m_stateFile << positionData_.data[i];
-    } else {
+        m_stateFile << positionData_.data[i];
+    } 
+    else {
       m_stateFile << 0;
     }
     m_stateFile << ",";
   }
-  m_stateFile << ",";
+  
   for (size_t i = 0; i < 6; ++i) {
     if (i < waypointData_.data.size()) {
       m_stateFile << waypointData_.data[i];
@@ -180,6 +182,7 @@ void SensorsDataConfig::writeDataToFile() {
 //#  m_stateFile << roll_r << "," << pitch_r << "," << yaw_r << ",";
 //// #
   for (size_t i = 0; i < 8; ++i) {
+    
     if (i < pwmData_.data.size()) {
       m_stateFile << pwmData_.data[i];
     } else {

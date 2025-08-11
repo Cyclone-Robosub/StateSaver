@@ -61,6 +61,8 @@ private:
   sensor_msgs::msg::Imu imuData_;
   sensor_msgs::msg::MagneticField magData_;
   std_msgs::msg::Int32MultiArray pwmData_;
+  std_msgs::msg::Float32MultiArray positionData_;
+  std_msgs::msg::Float32MultiArray waypointData_;
 
   // Variables to store Roll, Pitch, Yaw from Odometry callback
   double roll_r, pitch_r, yaw_r;
@@ -74,6 +76,9 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   // Callback functions for subscriptions
+  void pwmCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg);
+  void positionCallback(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
+  void waypointCallback(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
   void depthPressureSensorCallback(const std_msgs::msg::String::SharedPtr msg);
   void imuSensorCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
   void magCallback(const sensor_msgs::msg::MagneticField::SharedPtr msg);
