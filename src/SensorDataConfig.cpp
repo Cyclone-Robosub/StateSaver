@@ -79,12 +79,38 @@ SensorsDataConfig::SensorsDataConfig(std::ofstream &outputStateFile)
                 std::placeholders::_1),
       waypointOptions);
 
+  pwm_subscription_ = this->create_subscription<std_msgs::msg::Int32MultiArray>(
+      "pwm_topic", rclcpp::QoS(5),
+      std::bind(&SensorsDataConfig::pwmCallback, this,
+                std::placeholders::_1),
+      pwmOptions);
+
+  
+
   
 
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(100),
       std::bind(&SensorsDataConfig::writeDataToFile, this));
 }
+
+void SensorsDataConfig::pwmCallback(
+    const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
+  pwmData_ = *msg;
+}
+
+void SensorsDataConfig::positionCallback(
+    const std_msgs::msg::Float32MultiArray::SharedPtr msg) {
+  positionData_ = *msg;
+}
+
+void SensorsDataConfig::waypointCallback(
+    const std_msgs::msg::Float32MultiArray::SharedPtr msg) {
+  waypointData_ = *msg;
+}
+
+
+
 
 void SensorsDataConfig::depthPressureSensorCallback(
     const std_msgs::msg::String::SharedPtr msg) {
@@ -114,40 +140,52 @@ void SensorsDataConfig::writeDataToFile() {
   m_stateFile << std::put_time(std::localtime(&currentTime), "%F %T") << ",";
   m_stateFile << depthPressureData_ << ",";
 
-  for (size_t i = 0; i < positionData_.data.size(); ++i) {
-    m_stateFile << positionData_.data[i]
-                << (i == positionData_.data.size() - 1 ? "" : ",");
+  for (size_t i = 0; i < 6; ++i) {
+    if (i < positionData_.data.size()) {
+      m_stateFile << positionData_.data[i];
+    } else {
+      m_stateFile << 0;
+    }
+    m_stateFile << ",";
   }
   m_stateFile << ",";
-  for (size_t i = 0; i < waypointData_.data.size(); ++i) {
-    m_stateFile << waypointData_.data[i]
-                << (i == waypointData_.data.size() - 1 ? "" : ",");
+  for (size_t i = 0; i < 6; ++i) {
+    if (i < waypointData_.data.size()) {
+      m_stateFile << waypointData_.data[i];
+    } else {
+      m_stateFile << 0;
+    }
+    m_stateFile << ",";
   }
   
 
-#  m_stateFile << imuData_.orientation.x << "," << imuData_.orientation.y << ","
-#              << imuData_.orientation.z << "," << imuData_.orientation.w << ",";
-#
-#  // ADDED: Gyro (Angular Velocity)
-#  m_stateFile << imuData_.angular_velocity.x << ","
-#              << imuData_.angular_velocity.y << ","
-#              << imuData_.angular_velocity.z << ",";
-#
-#  // ADDED: Accel (Linear Acceleration)
-#  m_stateFile << imuData_.linear_acceleration.x << ","
-#              << imuData_.linear_acceleration.y << ","
-#              << imuData_.linear_acceleration.z << ",";
-#
-#  // ADDED: Mag (Magnetic Field)
-#  m_stateFile << magData_.magnetic_field.x << "," << magData_.magnetic_field.y
-#              << "," << magData_.magnetic_field.z << ",";
-#
-#  // ADDED: Roll, Pitch, Yaw
-#  m_stateFile << roll_r << "," << pitch_r << "," << yaw_r << ",";
-#
-  for (size_t i = 0; i < pwmData_.data.size(); ++i) {
-    m_stateFile << pwmData_.data[i]
-                << (i == pwmData_.data.size() - 1 ? "" : ",");
+//#  m_stateFile << imuData_.orientation.x << "," << imuData_.orientation.y << ","
+//#              << imuData_.orientation.z << "," << imuData_.orientation.w << ",";
+//#
+//#  // ADDED: Gyro (Angular Velocity)
+//#  m_stateFile << imuData_.angular_velocity.x << ","
+//#              << imuData_.angular_velocity.y << ","
+//#              << imuData_.angular_velocity.z << ",";
+//#
+//#  // ADDED: Accel (Linear Acceleration)
+//#  m_stateFile << imuData_.linear_acceleration.x << ","
+//#              << imuData_.linear_acceleration.y << ","
+//#              << imuData_.linear_acceleration.z << ",";
+//#
+//#  // ADDED: Mag (Magnetic Field)
+//#  m_stateFile << magData_.magnetic_field.x << "," << magData_.magnetic_field.y
+//#              << "," << magData_.magnetic_field.z << ",";
+//#
+//#  // ADDED: Roll, Pitch, Yaw
+//#  m_stateFile << roll_r << "," << pitch_r << "," << yaw_r << ",";
+//// #
+  for (size_t i = 0; i < 8; ++i) {
+    if (i < pwmData_.data.size()) {
+      m_stateFile << pwmData_.data[i];
+    } else {
+      m_stateFile << 0;
+    }
+    m_stateFile << ",";
   }
   m_stateFile << "\n";
   if (m_stateFile.tellp() > 100) {
