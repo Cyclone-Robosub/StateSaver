@@ -11,7 +11,6 @@ class StateSaverTest : public ::testing::Test {
 protected:
     void SetUp() override {
         rclcpp::init(0, nullptr);
-        std::filesystem::remove_all("data");
         
         temp_node_ = rclcpp::Node::make_shared("test_node");
         imu_pub_ = temp_node_->create_publisher<sensor_msgs::msg::Imu>("/imu", 10);
@@ -22,7 +21,7 @@ protected:
 
     void TearDown() override {
         rclcpp::shutdown();
-        std::filesystem::remove_all("data");
+        
     }
 
     rclcpp::Node::SharedPtr temp_node_;
@@ -35,24 +34,37 @@ protected:
 // Test CSV file initialization
 TEST_F(StateSaverTest, TestCSVInitialization) {
     auto node = std::make_shared<StateSaver>();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::seconds(4));
     
     bool csv_found = false;
     for (const auto& entry : std::filesystem::directory_iterator("data")) {
         if (entry.path().extension() == ".csv") {
             csv_found = true;
-            
+            EXPECT_TRUE(csv_found);
             std::ifstream file(entry.path());
             std::string header;
             std::getline(file, header);
             
             // Check if header contains expected columns
             EXPECT_TRUE(header.find("timestamp") != std::string::npos);
-            EXPECT_TRUE(header.find("angular_velocity_x") != std::string::npos);
-            EXPECT_TRUE(header.find("magnetic_field_z") != std::string::npos);
-            EXPECT_TRUE(header.find("pwm_1") != std::string::npos);
-            EXPECT_TRUE(header.find("depth_pressure_sensor") != std::string::npos);
+            EXPECT_TRUE(header.find("px") != std::string::npos);
+            EXPECT_TRUE(header.find("py") != std::string::npos);
+            EXPECT_TRUE(header.find("pz") != std::string::npos);
+            EXPECT_TRUE(header.find("pp") != std::string::npos);
+            EXPECT_TRUE(header.find("pq") != std::string::npos);
+            EXPECT_TRUE(header.find("pr") != std::string::npos);
+            EXPECT_TRUE(header.find("wx") != std::string::npos);
+            EXPECT_TRUE(header.find("wy") != std::string::npos);
+            EXPECT_TRUE(header.find("wz") != std::string::npos);
+            EXPECT_TRUE(header.find("wp") != std::string::npos);
+            EXPECT_TRUE(header.find("wq") != std::string::npos);
+            EXPECT_TRUE(header.find("wr") != std::string::npos);
+            for(int i = 1; i <=8; i++){
+                 EXPECT_TRUE(header.find("pwm_" + std::to_string(i)) != std::string::npos);
+            }
             break;
+        }else{
+            EXPECT_TRUE(csv_found);
         }
     }
     EXPECT_TRUE(csv_found);

@@ -57,7 +57,7 @@ void StateSaver::initialize_csv_file()
 
     imu_data_file_.open(csv_filename_, std::ios::out);
     if (imu_data_file_.is_open()) {
-        imu_data_file_ << "timestamp," << "px, py, pz, pp, pq, pr, wx, wy, wz, wp, wq, wr" 
+        imu_data_file_ << "timestamp," << "px, py, pz, pp, pq, pr, wx, wy, wz, wp, wq, wr," 
         /*
                       << "angular_velocity_x,angular_velocity_y,angular_velocity_z,"
                       << "linear_acceleration_x,linear_acceleration_y,linear_acceleration_z,"
