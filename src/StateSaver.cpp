@@ -83,14 +83,14 @@ void StateSaver::pwm_callback(const std_msgs::msg::Int32MultiArray::SharedPtr ms
 void StateSaver::position_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg){
     int i = 0;
     for(float value : msg->data){
-        position_array[i] = (int)value;
+        position_array[i] = value;
         ++i;
     }
 }
 void StateSaver::waypoint_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg){
     int i = 0;
     for(float value : msg->data){
-        waypoint_array[i] = (int)value;
+        waypoint_array[i] = value;
         ++i;
     }
 }

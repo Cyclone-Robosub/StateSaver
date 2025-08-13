@@ -54,8 +54,8 @@ private:
     double linear_acceleration_z = 0.0;
 
     int pwm_array[8];
-    int position_array[6];
-    int waypoint_array[6];
+    float position_array[6];
+    float waypoint_array[6];
 
     std::string depth_pressure_msg;
 
